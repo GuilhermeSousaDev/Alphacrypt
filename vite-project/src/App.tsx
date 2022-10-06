@@ -1,9 +1,10 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import './App.css';
 
 function App() {
   const [text, setText] = useState<string>('');
   const [cryptText, setCryptText] = useState<string>('');
+  const [decryptText, setDecryptText] = useState<string>('');
   const alphabet = [
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
   ];
@@ -12,16 +13,33 @@ function App() {
     const fragText = text.split('');
     let indexs: number[] = [];
     
-    fragText.map(text => {
-      indexs.push(alphabet.indexOf(text));
-    });
+    fragText.map(text => indexs.push(alphabet.indexOf(text)));
+
+    let cryptedText: string[] = [];
 
     for (let i = 0; i < indexs.length; i++) {
-      console.log(alphabet[indexs[i]], fragText.indexOf(fragText[i]) + 1);
+      cryptedText.push(alphabet[indexs[i] + (i + 1)]);
     }
 
-    //console.log(alphabet[indexs[1] + fragText.indexOf(fragText[1]) + 1]);
+    setCryptText(cryptedText.join(''));
+    setText('');
   }, [text]);
+
+  const decrypt = useCallback(() => {
+    const fragText = cryptText.split('');
+    let indexs: number[] = [];
+
+    fragText.map(text => indexs.push(alphabet.indexOf(text)));
+
+    let decryptedText: string[] = [];
+
+    for (let i = 0; i < indexs.length; i++) {
+      decryptedText.push(alphabet[indexs[i] - (i + 1)]);
+    }
+    
+    setDecryptText(decryptedText.join(''));
+    setText('');
+  }, [cryptText]);
 
   return (
     <div className="App">
@@ -29,9 +47,14 @@ function App() {
       <textarea 
         name="crypt" 
         onChange={e => setText(e.target.value)}
+        value={text}
         cols={30} 
         rows={10}></textarea>
       <button onClick={crypt}>Crypt</button>
+      { cryptText && <button onClick={decrypt}>Decrypt</button>}
+
+      { cryptText && <p>Crypted Text: { cryptText }</p> }
+      { decryptText && <p>Decrypt Text: { decryptText }</p> }
     </div>
   )
 }
