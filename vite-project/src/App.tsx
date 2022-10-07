@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import './App.css';
 
 function App() {
@@ -25,22 +25,6 @@ function App() {
     setText('');
   }, [text]);
 
-  const decrypt = useCallback(() => {
-    const fragText = cryptText.split('');
-    let indexs: number[] = [];
-
-    fragText.map(text => indexs.push(alphabet.indexOf(text)));
-
-    let decryptedText: string[] = [];
-
-    for (let i = 0; i < indexs.length; i++) {
-      decryptedText.push(alphabet[indexs[i] - (i + 1)]);
-    }
-    
-    setDecryptText(decryptedText.join(''));
-    setText('');
-  }, [cryptText]);
-
   return (
     <div className="App">
       <h2>Crypt a text</h2>
@@ -51,10 +35,8 @@ function App() {
         cols={30} 
         rows={10}></textarea>
       <button onClick={crypt}>Crypt</button>
-      { cryptText && <button onClick={decrypt}>Decrypt</button>}
 
       { cryptText && <p>Crypted Text: { cryptText }</p> }
-      { decryptText && <p>Decrypt Text: { decryptText }</p> }
     </div>
   )
 }
