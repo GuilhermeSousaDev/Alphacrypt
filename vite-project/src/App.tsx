@@ -10,19 +10,47 @@ function App() {
   ];
 
   const crypt = useCallback(() => {
-    const fragText = text.split('');
-    let indexs: number[] = [];
-    
-    fragText.map(text => indexs.push(alphabet.indexOf(text)));
+    let letterIndexs: number[] = [];
+
+    text.split('').map(text => letterIndexs.push(alphabet.indexOf(text)));
 
     let cryptedText: string[] = [];
 
-    for (let i = 0; i < indexs.length; i++) {
-      cryptedText.push(alphabet[indexs[i] + (i + 1)]);
+    for (let i = 0; i < letterIndexs.length; i++) {
+      const saltLetterByPositionLength = i + 1;
+      let letterIndex = letterIndexs[i] + saltLetterByPositionLength;
+
+      if (letterIndex >= alphabet.length) {
+        letterIndex = 0 + (letterIndex - alphabet.length);
+      }
+
+      cryptedText.push(alphabet[letterIndex]);
     }
 
-    setCryptText(cryptedText.join(''));
+    setCryptText(cryptedText.join('').trim());
     setText('');
+  }, [text]);
+
+  const decrypt = useCallback(() => {
+    let letterIndexs: number[] = [];
+
+    cryptText.trim().split('').map(text => letterIndexs.push(alphabet.indexOf(text)));
+
+    let decryptedText: string[] = [];
+
+    for (let i = 0; i < letterIndexs.length; i++) {
+      let letterIndex = letterIndexs[i] - (i + 1);
+
+      if (letterIndex < 0) {
+        letterIndex = (alphabet.length - 1) - parseInt(letterIndexs[i].toString());
+
+        console.log(letterIndex);
+      }
+
+      decryptedText.push(alphabet[letterIndex]);
+    }
+
+    console.log(decryptedText.join(''));
   }, [text]);
 
   return (
@@ -36,7 +64,12 @@ function App() {
         rows={10}></textarea>
       <button onClick={crypt}>Crypt</button>
 
-      { cryptText && <p>Crypted Text: { cryptText }</p> }
+      { cryptText && (
+        <>
+          <p>Crypted Text: { cryptText }</p>
+          <button onClick={decrypt}>Decrypt</button>
+        </>
+      ) }
     </div>
   )
 }
